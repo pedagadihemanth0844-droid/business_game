@@ -1,0 +1,224 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#070a1a"><title>Business Rajahmundry – Multiplayer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--ink:#f4f1ff;--gold:#ffd24a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#2b1666,#070a1a 62%) #070a1a;color:var(--ink);font:700 15px Rajdhani,system-ui,sans-serif;overflow-x:hidden}
+.big,h1{font-family:Bungee,Impact,sans-serif}
+#stars{position:fixed;inset:0;pointer-events:none}.st{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;animation:tw 3s infinite alternate}
+@keyframes tw{to{opacity:.1;transform:scale(.4)}}
+#lobby{position:relative;max-width:460px;margin:0 auto;padding:7vh 18px;text-align:center}
+.title{font-family:Bungee,Impact,sans-serif;font-size:clamp(32px,9vw,56px);line-height:1.05;margin:0 0 6px;background:linear-gradient(90deg,#ffd24a,#ff3d8b,#34e0ff,#ffd24a);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 4s linear infinite}
+@keyframes sh{to{background-position:300%}}
+input{font:inherit;width:100%;padding:12px;border-radius:12px;border:2px solid #3b3f8f;background:#0d1130;color:var(--ink);margin:6px 0}
+.btn{font:inherit;cursor:pointer;border:0;border-radius:14px;padding:12px 18px;color:#190b00;background:linear-gradient(#ffe27a,#ffa400);box-shadow:0 0 18px #ffb80088,0 4px 0 #a86100}
+.btn:active{transform:translateY(3px)}.btn:disabled{filter:grayscale(1) brightness(.6)}
+.btn.alt{background:linear-gradient(#7af0ff,#1b9bd6);box-shadow:0 0 18px #34e0ff66,0 4px 0 #0b5a80}
+.btn.red{color:#fff;background:linear-gradient(#ff8fb4,#e0145a);box-shadow:0 4px 0 #8c0a38}
+.btn.go{font-family:Bungee,Impact,sans-serif;font-size:20px;animation:pulse 1s infinite alternate}
+@keyframes pulse{to{transform:scale(1.07);box-shadow:0 0 34px #ffd24a,0 4px 0 #a86100}}
+#game{position:relative;display:none;gap:12px;padding:8px;max-width:1400px;margin:0 auto;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+#stage{width:min(98vw,86vh,860px);perspective:1400px;transition:transform 1s}#stage.zoom{transform:scale(1.04)}#stage.shake{animation:shk .5s}
+@keyframes shk{20%{transform:translate(-10px,6px)}40%{transform:translate(9px,-7px)}60%{transform:translate(-7px,-4px)}80%{transform:translate(5px,5px)}}
+#board{position:relative;width:100%;aspect-ratio:1;display:grid;grid-template:repeat(11,1fr)/repeat(11,1fr);transform-style:preserve-3d;border-radius:18px;background:#0b0f2c;box-shadow:0 40px 80px #000,0 0 70px #7a3cff77;animation:sway 14s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotateX(34deg) rotateZ(-3deg)}to{transform:rotateX(27deg) rotateZ(3deg)}}
+.tile{position:relative;border:1px solid #ffffff2a;background:linear-gradient(160deg,#1c2268,#10143a);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:calc(var(--t)*.18);line-height:1.05;transform-style:preserve-3d;cursor:pointer;padding:2px}
+.tile b{font-size:1em}.em{font-size:1.9em}.band{position:absolute;left:0;right:0;top:0;height:20%}
+.own{position:absolute;right:2px;bottom:2px;width:calc(var(--t)*.2);height:calc(var(--t)*.2);border-radius:50%;box-shadow:0 0 8px currentColor}
+.hs{position:absolute;left:1px;bottom:0;font-size:1.3em}
+.corner{background:linear-gradient(135deg,#7a2cff,#ff3d8b);font-size:calc(var(--t)*.16)}.corner .em{font-size:2.4em}
+.tk{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;transform-style:preserve-3d}
+.w{--h:calc(var(--t)*.31);width:calc(var(--t)*.62);height:calc(var(--t)*.62);margin:0 calc(var(--t)*-.12);transform-style:preserve-3d;transform:translateZ(calc(var(--t)*.32)) rotateX(-32deg)}
+.w.cur{animation:bob .9s ease-in-out infinite alternate}.w.hop{animation:hop .22s}
+@keyframes bob{to{transform:translateZ(calc(var(--t)*.6)) rotateX(-32deg)}}
+@keyframes hop{50%{transform:translateZ(calc(var(--t)*1.1)) rotateX(-32deg)}}
+.cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:spin 4s linear infinite}
+@keyframes spin{from{transform:rotateX(-20deg) rotateY(0)}to{transform:rotateX(-20deg) rotateY(360deg)}}
+.cube i{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:normal calc(var(--t)*.3) Bungee,Impact,sans-serif;color:#fff;text-shadow:0 1px 3px #000;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 55%,#fff),var(--c) 55%,color-mix(in srgb,var(--c) 55%,#000));border:2px solid #fffb;box-shadow:inset 0 0 10px #fff9,0 0 14px var(--c)}
+.cube i:nth-child(1){transform:translateZ(var(--h))}.cube i:nth-child(2){transform:rotateY(90deg) translateZ(var(--h))}.cube i:nth-child(3){transform:rotateY(180deg) translateZ(var(--h))}.cube i:nth-child(4){transform:rotateY(-90deg) translateZ(var(--h))}.cube i:nth-child(5){transform:rotateX(90deg) translateZ(var(--h))}.cube i:nth-child(6){transform:rotateX(-90deg) translateZ(var(--h))}
+#center{grid-area:2/2/11/11;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;gap:3%}
+.logo{font-family:Bungee,Impact,sans-serif;font-size:calc(var(--t)*.9);line-height:1;background:linear-gradient(90deg,#ffd24a,#ff3d8b,#34e0ff,#ffd24a);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 4s linear infinite}
+.ring{position:absolute;width:55%;aspect-ratio:1;border-radius:50%;border:3px dashed #ffd24a55;animation:rot 24s linear infinite}@keyframes rot{to{transform:rotate(360deg)}}
+#cn{font-size:calc(var(--t)*.34);position:relative}
+#side{width:min(98vw,350px);display:flex;flex-direction:column;gap:10px}
+.card{background:linear-gradient(#171c52dd,#0d1130dd);border:1px solid #ffffff2a;border-radius:16px;padding:10px}
+.pl{position:relative;display:flex;align-items:center;gap:8px;padding:6px;border-radius:10px}
+.pl.on{background:#ffd24a22;box-shadow:inset 0 0 0 2px var(--gold),0 0 16px #ffd24a66}.pl.out{opacity:.35;text-decoration:line-through}
+.sw{width:22px;height:22px;border-radius:5px;background:var(--c);box-shadow:0 0 10px var(--c)}.cash{margin-left:auto;font-family:Bungee,Impact,sans-serif;color:var(--gold)}
+.fl{position:absolute;right:10px;top:0;font-family:Bungee,Impact,sans-serif;animation:up 1.4s forwards}@keyframes up{to{transform:translateY(-34px);opacity:0}}
+#act{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}#log{max-height:130px;overflow:auto;font-size:13px;opacity:.9}
+#dfx{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;flex-direction:column;background:radial-gradient(circle,#000a,#000e);pointer-events:none}#dfx.on{display:flex}
+.dc{display:flex;gap:64px;margin:34px;perspective:700px}.die{width:110px;height:110px;position:relative;transform-style:preserve-3d}
+.die u{position:absolute;inset:0;border-radius:16px;background:linear-gradient(135deg,#fff,#c9d2ff);display:grid;grid:repeat(3,1fr)/repeat(3,1fr);padding:14px;box-shadow:inset 0 0 14px #0005}
+.die u i{border-radius:50%;margin:12%}.die u i.on{background:radial-gradient(circle at 35% 30%,#666,#000)}
+#dwho{font-size:26px;color:#fff}#dnum{font-size:clamp(70px,22vw,140px);color:var(--gold);text-shadow:0 0 30px #ff3d8b,0 0 60px #ffd24a;min-height:1.1em;animation:pop .5s}@keyframes pop{from{transform:scale(.2);opacity:0}}
+#toast{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:50%;z-index:30;transform:translate(-50%,-150%);padding:12px 20px;border-radius:14px;max-width:92vw;text-align:center;font-size:17px;box-shadow:0 0 30px #000a;background:#1b6fa8}
+#toast.show{animation:tin 4s forwards}@keyframes tin{8%,88%{transform:translate(-50%,0)}}
+#toast.gain{background:#0c8f4a}#toast.loss{background:#c4143f}#toast.buy{background:#b88300}#toast.jail{background:#6b25c9}#toast.win{background:linear-gradient(90deg,#ff3d8b,#ffd24a,#34e0ff)}
+.pt{position:fixed;z-index:40;pointer-events:none;animation:fly 1.5s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes fly{50%{transform:translate(var(--x),var(--y)) rotate(270deg)}to{transform:translate(var(--x),calc(var(--y) + 380px)) rotate(540deg);opacity:0}}
+#flash{position:fixed;inset:0;z-index:35;pointer-events:none;opacity:0}#flash.on{animation:fl .7s}@keyframes fl{20%{opacity:.55}}
+.hint{opacity:.8;margin-top:8px}
+
+/* big inputs + chat + mobile */
+#lobby{max-width:540px}
+input{font-size:20px;padding:16px;border-radius:14px}
+#nm{font-size:26px;padding:20px;text-align:center;border-color:#ffd24a}
+#rm{font-size:26px}
+#chat{display:flex;flex-direction:column;gap:8px}
+#msgs{height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;font-size:17px;padding-right:4px}
+.m{padding:8px 12px;border-radius:12px;background:#ffffff14;word-break:break-word;line-height:1.25}.m b{color:var(--c)}
+#cin{display:flex;gap:8px}#cin input{margin:0;flex:1;min-width:0;font-size:19px;padding:15px}
+.qr{display:flex;gap:6px;flex-wrap:wrap}.qr button{font-size:26px;border:0;border-radius:12px;background:#ffffff1a;padding:6px 14px;cursor:pointer}
+@media(max-width:700px){
+ body{font-size:16px}#lobby{padding:4vh 14px}
+ #game{padding:4px;gap:8px}#stage{width:100vw}
+ @keyframes sway{from{transform:rotateX(24deg) rotateZ(-2deg)}to{transform:rotateX(18deg) rotateZ(2deg)}}
+ .tile{font-size:calc(var(--t)*.21)}
+ #side{width:100%;padding-bottom:110px}
+ #act{position:fixed;left:0;right:0;bottom:0;z-index:15;margin:0;padding:12px 10px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(#0000,#070a1af2 28%);justify-content:center}
+ #act .btn{flex:1 1 42%;font-size:19px;padding:16px 10px}
+ #msgs{height:190px}
+}
+
+/* smaller chat + extra mobile polish */
+html,body{overflow-x:hidden}button{touch-action:manipulation}
+#chat{padding:8px;gap:6px}#msgs{height:96px;font-size:14px;gap:4px}.m{padding:4px 8px;border-radius:9px}
+#cin input{font-size:16px;padding:9px}#cs2{padding:9px 14px;font-size:15px}
+.qr button{font-size:18px;padding:2px 9px}#chat.min #msgs,#chat.min .qr,#chat.min #cin{display:none}
+@media(max-width:700px){#msgs{height:90px}#toast{font-size:15px;padding:10px 14px}.pl{padding:4px 6px}.cash{font-size:14px}}
+@media(max-width:480px){.dc{transform:scale(.78);margin:10px 0;gap:48px}#dnum{font-size:80px}}
+</style></head><body>
+<div id="stars"></div>
+<div id="lobby"><h1 class="title">BUSINESS<br>RAJAHMUNDRY</h1>
+<p>Buy cities. Build empires. Bankrupt your friends.<br>2–8 players · each on their own device</p>
+<input id="nm" maxlength="12" placeholder="Your name"><div style="text-align:left;opacity:.8;font-size:13px;margin-top:6px">Starting cash per player (₹) – set by the host</div><input id="cs" type="number" min="1000" step="1000" value="15000"><button class="btn go" id="create">CREATE ROOM</button><p class="big" style="font-size:13px;opacity:.7;margin:20px 0 0">— OR JOIN A FRIEND —</p><input id="rm" maxlength="12" placeholder="Enter room code" style="text-transform:uppercase;text-align:center;letter-spacing:4px">
+<button class="btn alt go" id="join">JOIN ROOM</button><p id="err" style="color:#ff8fb4"></p></div>
+<div id="game"><div id="stage"><div id="board"><div id="center"><div class="ring"></div><div class="logo">BUSINESS<br>INDIA</div><div id="cn"></div></div></div></div>
+<div id="side"><div class="card"><div class="big" style="font-size:13px;opacity:.7">ROOM CODE <span id="rc" style="color:var(--gold);font-size:22px;letter-spacing:3px"></span> <button class="btn alt" style="padding:4px 10px;font-size:13px" onclick="navigator.clipboard&&navigator.clipboard.writeText(room);toast('Room code copied','gain')">COPY</button> <button class="btn" style="padding:4px 10px;font-size:13px" onclick="share()">INVITE</button></div><div id="pl"></div><div id="act"></div><div class="hint" id="hint"></div></div><div class="card" id="log"></div>
+<div class="card" id="chat"><div class="big" style="font-size:12px;opacity:.7;cursor:pointer" onclick="this.parentNode.classList.toggle('min')">CHAT ▾ (tap to show/hide)</div><div id="msgs"></div>
+<div class="qr"><button onclick="sendChat('😂')">😂</button><button onclick="sendChat('🔥')">🔥</button><button onclick="sendChat('💰')">💰</button><button onclick="sendChat('😡')">😡</button><button onclick="sendChat('👏')">👏</button></div>
+<div id="cin"><input id="ci" maxlength="140" placeholder="Type a message…" autocomplete="off"><button class="btn" id="cs2">SEND</button></div></div></div></div>
+<div id="dfx"><div id="dwho" class="big"></div><div class="dc"><div class="die" id="d0"></div><div class="die" id="d1"></div></div><div id="dnum" class="big"></div></div>
+<div id="toast"></div><div id="flash"></div>
+<script>
+const $=i=>document.getElementById(i),sleep=ms=>new Promise(r=>setTimeout(r,ms)),cl=o=>JSON.parse(JSON.stringify(o)),r6=()=>1+Math.floor(Math.random()*6),esc=x=>String(x).replace(/[&<>"']/g,c=>"&#"+c.charCodeAt(0)+";");
+const CLR=["#ff3d3d","#34e0ff","#7dff5a","#ffd24a","#ff3dd8","#ff8a1f","#a77bff","#f2f2f2"],GC=["#ff4d4d","#ff9d2e","#ffe14a","#4ade80","#38bdf8","#c084fc"];
+const NM={S:"START",J:"Central Jail",D:"Darbar Cafe",R:"Babai Gari Illu",ch:"Chance",cc:"Community Chest",it:"Income Tax",wt:"Wealth Tax"},EM={S:"🚩",J:"⛓️",D:"☕",R:"🏠",ch:"❓",cc:"🎁",it:"🧾",wt:"💎"},UE={"Railway":"🚆","Water Works":"🚰","Electric Company":"💡","Air India":"✈️","Motor Boat":"🚤","BEST":"🚌"};
+const L=["c:Alcot Gardens","c:Bommuru","cc","c:Danavaipeta","u:Railway","c:Diwancheruvu","ch","c:Dowleswaram","c:Hukampeta"],TP=["c:Innispeta","c:Kadiam","it","c:Kadiyapulanka","ch","u:Water Works","c:Konthamuru","c:Lalacheruvu","cc"],RT=["c:Mangalavaripeta","ch","c:Morampudi","u:Electric Company","c:Prakasam Nagar","cc","c:Pushkar Ghat","wt","u:Air India"],BT=["c:Rajanagaram","cc","c:Syamala Nagar","u:Motor Boat","ch","c:Tilak Road","u:BEST","cc","ch"];
+let ci=0;const G=[[],[],[],[],[],[]];
+const T=["S",...L,"J",...TP,"D",...RT,"R",...BT].map((x,i)=>{const [k,n]=x.split(":"),t={k,n:n||NM[k],e:EM[k]||UE[n]};if(k=="c"){t.p=Math.round((2000+ci*6000/17)/100)*100;t.g=Math.floor(ci/3);t.r=Math.round(t.p/10);G[t.g].push(i);ci++}if(k=="u")t.p=3500;return t});
+const CH=[["Stock market crash! Pay ₹100",-100],["House tax is due. Pay ₹60",-60],["Summoned for jury duty – off to Central Jail!","J"],["Fine for rash driving. Pay ₹80",-80],["Flood relief donation. Pay ₹50",-50],["Hospital bill. Pay ₹70",-70],["Lottery prize! Collect ₹200",200],["Crossword contest won! Collect ₹100",100],["CEO signing bonus! Collect ₹150",150],["Share dividend. Collect ₹100",100],["Pushkaralu festival bonus! Collect ₹250",250]];
+const CC=[["Grand lottery prize! Collect ₹250",250],["Your birthday! Collect ₹20 from each player","B"],["Best Sales Executive prize. Collect ₹150",150],["Income tax refund. Collect ₹80",80],["Sale of stock. Collect ₹200",200],["Arrested for fraud – Central Jail!","J"],["Income tax due. Pay ₹100",-100],["Property repairs. Pay ₹90",-90],["School fees & medicines. Pay ₹120",-120],["Marriage celebration. Pay ₹100",-100],["Godavari boat race won! Collect ₹120",120]];
+const K=20,sc=a=>a.map(c=>[c[0].replace(/₹(\d+)/g,(m,n)=>"₹"+n*K),typeof c[1]=="number"?c[1]*K:c[1]]),CHs=sc(CH),CCs=sc(CC);
+const gp=i=>i==0?[11,1]:i<=10?[11-i,1]:i<=20?[1,i-9]:i<=30?[i-19,11]:[11,41-i];
+const own=(s,g,p)=>G[g].every(k=>s.O[k]&&s.O[k].o==p);
+function rent(s,pos,sum){const o=s.O[pos],t=T[pos];let r;if(t.k=="u"){let c=0;for(const k in s.O)if(T[k].k=="u"&&s.O[k].o==o.o)c++;r=c*sum*80}else r=o.h?t.r*[1,3,8,14,22][o.h]:t.r*(own(s,t.g,o.o)?2:1);return s.P[o.o].j>=0?Math.round(r/2):r}
+/* ---- game logic (runs on the active player's device, result is synced) ---- */
+function ev(s,t,k,p){s.ev={t,k,p:p==null?-1:p,n:(s.ev?s.ev.n:0)+1};s.log.push(t);if(s.log.length>40)s.log.shift()}
+function pay(s,i,amt,to){const p=s.P[i];while(p.cash<amt){const o=Object.keys(s.O).find(k=>s.O[k].o==i);if(!o)break;const t=T[o];p.cash+=Math.round(t.p/2)+(s.O[o].h||0)*Math.round(t.p/4);delete s.O[o];s.log.push(p.n+" sold "+t.n+" to the bank")}
+ const g=Math.min(p.cash,amt);p.cash-=g;if(to!=null&&to>=0)s.P[to].cash+=g;if(g<amt){p.out=1;p.cash=0;s.log.push("💀 "+p.n+" is BANKRUPT!")}}
+function endT(s){const al=s.P.filter(p=>!p.out);if(s.multi&&al.length<2){s.ph="over";s.win=s.P.findIndex(p=>!p.out);ev(s,"🏆 "+s.P[s.win].n+" wins the empire!","win",s.win);return}
+ const p=s.P[s.cur];if(s.xdbl&&!p.out&&p.j<0){s.ph="roll";s.xdbl=false;return}
+ s.dbl=0;s.xdbl=false;do{s.cur=(s.cur+1)%s.P.length}while(s.P[s.cur].out);s.ph="roll"}
+function jail(s,p){p.pos=10;p.j=0;s.dbl=0;s.xdbl=false;s.roll.jump=10}
+function land(s,sum){const i=s.cur,p=s.P[i],t=T[p.pos],k=t.k;s.ph="act";
+ if(k=="c"||k=="u"){const o=s.O[p.pos];if(!o){if(p.cash>=t.p){s.ph="buy";ev(s,p.n+" lands on "+t.n+" – for sale ₹"+t.p,"info",i)}else ev(s,p.n+" lands on "+t.n+" but cannot afford ₹"+t.p,"info",i)}
+  else if(o.o!=i){const r=rent(s,p.pos,sum);pay(s,i,r,o.o);ev(s,p.n+" pays ₹"+r+" rent to "+s.P[o.o].n,"loss",i)}else ev(s,p.n+" is home at "+t.n,"info",i)}
+ else if(k=="ch"||k=="cc"){const c=(k=="ch"?CHs:CCs)[sum-2],d=c[1];
+  if(d=="J"){jail(s,p);ev(s,p.n+": "+c[0],"jail",i);endT(s);return}
+  if(d=="B")s.P.forEach((q,j)=>{if(j!=i&&!q.out)pay(s,j,400,i)});else if(d>0)p.cash+=d;else pay(s,i,-d,null);
+  ev(s,p.n+": "+c[0],d=="B"||d>0?"gain":"loss",i)}
+ else if(k=="it"){pay(s,i,2000,null);ev(s,p.n+" pays ₹2000 income tax","loss",i)}
+ else if(k=="wt"){let w=600;for(const x in s.O)if(s.O[x].o==i&&T[x].k=="c")w+=s.O[x].h==4?800:s.O[x].h*400;w=Math.min(w,4000);pay(s,i,w,null);ev(s,p.n+" pays ₹"+w+" wealth tax","loss",i)}
+ else if(k=="D"){s.P.forEach((q,j)=>{if(j!=i&&!q.out)pay(s,i,200,j)});ev(s,p.n+" treats everyone at Darbar Cafe (₹200 each)","loss",i)}
+ else if(k=="R"){s.P.forEach((q,j)=>{if(j!=i&&!q.out)pay(s,j,400,i)});ev(s,p.n+" rests at Babai Gari Illu – collects ₹400 from each!","gain",i)}
+ else if(k=="J")ev(s,p.n+" is just visiting Central Jail","info",i);
+ if(p.out)endT(s)}
+function doRoll(s){const i=s.cur,p=s.P[i],a=r6(),b=r6(),sum=a+b,from=p.pos;let x=a==b;s.roll={q:(s.roll?s.roll.q:0)+1,pi:i,a,b,from,steps:0,jump:null};s.xdbl=false;
+ if(p.j>=0){if(x){p.j=-1;x=false;s.log.push(p.n+" rolled a double and breaks out!")}else{p.j++;if(p.j>=3){pay(s,i,1000,null);p.j=-1;s.log.push(p.n+" pays ₹1000 and leaves jail")}else{ev(s,p.n+" stays in Central Jail ("+p.j+"/3)","jail",i);endT(s);return}}}
+ else if(x&&++s.dbl>=3){jail(s,p);ev(s,p.n+" rolled 3 doubles – Central Jail!","jail",i);endT(s);return}
+ p.pos=(from+sum)%40;if(from+sum>=40){p.cash+=2000;s.log.push(p.n+" passed START +₹2000")}
+ s.roll.steps=sum;s.xdbl=x;land(s,sum)}
+function build(s,k){const p=s.P[s.cur],t=T[k],o=s.O[k],c=Math.round(t.p/2);if(o&&o.o==s.cur&&t.k=="c"&&o.h<4&&own(s,t.g,s.cur)&&p.cash>=c&&G[t.g].every(x=>s.O[x].h>=o.h)){p.cash-=c;o.h++;ev(s,p.n+(o.h==4?" builds a HOTEL in ":" builds a house in ")+t.n+"!","buy",s.cur)}}
+/* ---- sync ---- */
+let db,ref,me,room,S,disp=null,busy=false,acting=false,queue=[],shown={},tok={},tkc=[],tl=[],lastQ=0,lastEv=null,lastCash={},ac;
+/* ---- WebSocket connection to server.js (replaces the cloud database) ---- */
+function connect(){return new Promise((res,rej)=>{const ws=new WebSocket((location.protocol=="https:"?"wss://":"ws://")+location.host),subs={},pend={};let id=0,chatF;
+ ws.onopen=()=>res({chat:o=>ws.send(JSON.stringify({t:"chat",...o})),onChat:f=>{chatF=f},doc:p=>({
+  get:()=>new Promise(r=>{const k=++id;pend[k]=r;ws.send(JSON.stringify({t:"get",p,k}))}),
+  set:d=>{ws.send(JSON.stringify({t:"set",p,d}));return Promise.resolve()},
+  onSnapshot:f=>{subs[p]=f;ws.send(JSON.stringify({t:"sub",p}))}})});
+ ws.onerror=()=>rej();ws.onclose=()=>toast("Disconnected from server - refresh the page","loss");
+ ws.onmessage=m=>{const x=JSON.parse(m.data);if(x.t=="got"){pend[x.k]({exists:!!x.d,data:()=>x.d});delete pend[x.k]}else if(x.t=="snap"&&subs[x.p])subs[x.p]({exists:true,data:()=>x.d});else if(x.t=="chat"&&chatF)chatF(x)}})}
+/* ---- chat + invite ---- */
+function addMsg(m){const d=document.createElement("div");d.className="m";const b=document.createElement("b");b.style.setProperty("--c",m.c||"#fff");b.textContent=m.n+": ";d.append(b,document.createTextNode(m.x));const box=$("msgs");box.appendChild(d);while(box.children.length>80)box.firstChild.remove();box.scrollTop=box.scrollHeight;
+ if(m.i!==me)beep(700,.08,"triangle");if(["😂","🔥","💰","😡","👏"].includes(m.x))burst([m.x],10)}
+function sendChat(x){x=(x||$("ci").value).trim().slice(0,140);if(!x||!db)return;const p=S&&S.P.find(q=>q.id==me);db.chat({p:"games/"+room,i:me,n:p?p.n:"?",c:p?p.c:"#fff",x});$("ci").value=""}
+function share(){const u=location.origin+"/#"+room,t="Join my Business Rajahmundry game! Room code: "+room;if(navigator.share)navigator.share({title:"Business Rajahmundry",text:t,url:u}).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText(t+" "+u);toast("Invite link copied","gain")}}
+$("cs2").onclick=()=>sendChat();$("ci").onkeydown=e=>{if(e.key=="Enter")sendChat()};
+async function cm(f){if(acting)return;acting=true;const s=cl(S);f(s);s.v=(S.v||0)+1;S=cl(s);try{await ref.set(s)}catch(e){toast("Sync error – try again","loss")}acting=false}
+const fresh=()=>({v:0,ph:"lobby",cur:0,P:[],O:{},dbl:0,roll:null,ev:null,log:[]});
+$("nm").value=(()=>{try{return localStorage.getItem("brn")||""}catch(e){return""}})();
+async function enter(create){const n=($("nm").value.trim()||"Player").slice(0,12);try{localStorage.setItem("brn",n)}catch(e){}
+ room=create?"":$("rm").value.trim().toUpperCase().replace(/[^\w-]/g,"").slice(0,12);if(!create&&!room){$("err").textContent="Enter the room code from your host.";return}$("err").textContent="";beep(440,.1);
+ try{db=await connect()}catch(e){db=null}
+ if(!db){$("err").textContent="Cannot reach the game server. Is it running (npm start)?";return}
+ if(!me){try{me=sessionStorage.getItem("brid")||(sessionStorage.setItem("brid",Math.random().toString(36).slice(2)),sessionStorage.getItem("brid"))}catch(e){me=Math.random().toString(36).slice(2)}}
+ if(create){for(let k=0;k<6;k++){room=Math.random().toString(36).slice(2,7).toUpperCase();if(!(await db.doc("games/"+room).get()).exists)break}}
+ ref=db.doc("games/"+room);const sn=await ref.get();if(!create&&!sn.exists){$("err").textContent="Room “"+room+"” not found – check the code with your host.";return}
+ let s=sn.exists?cl(sn.data()):fresh();if(create)s.cash=Math.max(1000,Math.min(500000,+$("cs").value||15000));
+ if(!s.P.some(p=>p.id==me)){if(s.ph!="lobby"){$("err").textContent="That game already started – use another room code.";return}if(s.P.length>=8){$("err").textContent="Room is full (8 players).";return}
+  s.P.push({id:me,n,c:CLR[s.P.length],pos:0,cash:s.cash||15000,j:-1,out:0});s.v=(s.v||0)+1;await ref.set(s);await sleep(250);const c=(await ref.get()).data();if(!c||!c.P.some(p=>p.id==me)){$("err").textContent="Could not join - please tap Join again.";return}s=cl(c)}
+ S=s;db.onChat(addMsg);$("lobby").style.display="none";$("game").style.display="flex";mk();
+ ref.onSnapshot(sn=>{if(!sn.exists)return;S=cl(sn.data());queue.push(S);pump()},()=>toast("Connection lost – reload","loss"))};
+if(location.hash.length>1)$("rm").value=location.hash.slice(1).toUpperCase().replace(/[^\w-]/g,"").slice(0,12);
+$("create").onclick=()=>enter(true);$("join").onclick=()=>enter(false);
+async function pump(){if(busy)return;busy=true;try{while(queue.length){const s=queue.shift();if(disp&&s.v<=disp.v)continue;await play(s)}}finally{busy=false;ctl()}}
+async function play(s){const r=s.roll;if(disp&&r&&r.q!==lastQ){lastQ=r.q;shown[r.pi]=r.from;placeTk();await diceFx(r);await walk(r)}else lastQ=r?r.q:0;
+ $("stage").classList.remove("zoom");const old=disp;disp=s;s.P.forEach((p,i)=>shown[i]=p.pos);render();if(old)fx(s);else lastEv=s.ev?s.ev.n:0}
+/* ---- cinematic bits ---- */
+function beep(f,d=.1,t="square",v=.04){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+d);o.stop(ac.currentTime+d)}catch(e){}}
+function toast(t,k){const e=$("toast");e.textContent=t;e.className="";void e.offsetWidth;e.className="show "+(k||"info")}
+function burst(em,n=28){for(let i=0;i<n;i++){const e=document.createElement("span");e.className="pt";e.textContent=em[i%em.length];e.style.cssText=`left:${innerWidth/2}px;top:${innerHeight/2}px;--x:${(Math.random()-.5)*innerWidth*.9}px;--y:${-Math.random()*innerHeight*.45}px;font-size:${18+Math.random()*26}px`;document.body.appendChild(e);setTimeout(()=>e.remove(),1600)}}
+function flash(c){const f=$("flash");f.style.background=c;f.className="";void f.offsetWidth;f.className="on"}
+function fx(s){const e=s.ev;if(!e||e.n===lastEv)return;lastEv=e.n;toast(e.t,e.k);
+ if(e.k=="gain"){burst(["🪙","💰","✨"]);beep(880,.25,"triangle")}
+ if(e.k=="buy"){burst(["🎉","✨","🏙️","🪙"],44);beep(660,.3,"triangle")}
+ if(e.k=="win"){burst(["🏆","🎊","🎉","👑"],100);beep(990,.6,"triangle")}
+ if(e.k=="jail"){flash("#a020ff");beep(90,.5,"sawtooth")}
+ if(e.k=="loss"){const st=$("stage");st.classList.remove("shake");void st.offsetWidth;st.classList.add("shake");flash("#ff0033");beep(130,.35,"sawtooth")}}
+const PT=["....x....","x.......x","x...x...x","x.x...x.x","x.x.x.x.x","x.xx.xx.x"],FT=["","rotateY(90deg)","rotateX(90deg)","rotateX(-90deg)","rotateY(-90deg)","rotateY(180deg)"],FR={1:[0,0],2:[0,-90],3:[-90,0],4:[90,0],5:[0,90],6:[0,180]};
+["d0","d1"].forEach(id=>{$(id).innerHTML=PT.map((p,v)=>`<u style="transform:${FT[v]} translateZ(55px)">${[...p].map(c=>`<i class="${c=="x"?"on":""}"></i>`).join("")}</u>`).join("")});
+async function diceFx(r){$("dwho").textContent=S.P[r.pi].n+" rolls…";$("dnum").textContent="";$("dfx").classList.add("on");$("stage").classList.add("zoom");
+ [r.a,r.b].forEach((v,i)=>{const d=$("d"+i);d.style.transition="none";d.style.transform=`rotateX(${Math.random()*360}deg) rotateY(${Math.random()*360}deg)`;void d.offsetWidth;d.style.transition=`transform ${1.5+i*.3}s cubic-bezier(.15,.8,.2,1)`;d.style.transform=`rotateX(${FR[v][0]+720+i*360}deg) rotateY(${FR[v][1]+1080}deg)`});
+ for(let k=0;k<9;k++){beep(200+Math.random()*300,.05);await sleep(200)}
+ $("dnum").textContent=(r.a+r.b)+(r.a==r.b?" DOUBLE!":"");beep(1200,.3,"triangle");await sleep(1500);$("dfx").classList.remove("on")}
+async function walk(r){const i=r.pi;for(let k=0;k<r.steps;k++){shown[i]=(shown[i]+1)%40;placeTk();const w=tok[i];w.classList.remove("hop");void w.offsetWidth;w.classList.add("hop");beep(300+k*45,.08,"triangle");await sleep(240)}
+ if(r.jump!=null&&shown[i]!=r.jump){await sleep(300);burst(["⛓️","💥"],14);shown[i]=r.jump;placeTk()}}
+/* ---- rendering ---- */
+function mk(){const b=$("board"),ro=new ResizeObserver(()=>b.style.setProperty("--t",b.clientWidth/11+"px"));ro.observe(b);
+ T.forEach((t,i)=>{const [r,c]=gp(i),d=document.createElement("div");d.className="tile"+(t.k.length==1&&t.k!="c"&&t.k!="u"?" corner":"");d.style.gridArea=r+"/"+c;
+  d.innerHTML=(t.k=="c"?`<div class="band" style="background:${GC[t.g]}"></div>`:"")+`<span class="em">${t.e||""}</span><b>${t.n}</b>${t.p?"<span>₹"+t.p+"</span>":""}<span class="own"></span><span class="hs"></span><div class="tk"></div>`;
+  d.onclick=()=>{const o=disp&&disp.O[i];toast(t.n+(t.p?" · ₹"+t.p+" · rent ₹"+(t.r||"80×dice")+(o?" · owner "+disp.P[o.o].n+(o.h?" · level "+o.h:""):" · unowned"):""),"info")};
+  b.appendChild(d);tkc[i]=d.querySelector(".tk");tl[i]=d})}
+function placeTk(){for(const i in tok){const p=tkc[shown[i]];if(p&&tok[i].parentNode!==p)p.appendChild(tok[i])}}
+function render(){const s=disp;$("rc").textContent=room;
+ s.P.forEach((p,i)=>{if(!tok[i]){const w=document.createElement("div");w.className="w";w.style.setProperty("--c",p.c);w.innerHTML='<div class="cube">'+`<i>${esc(p.n[0].toUpperCase())}</i>`.repeat(6)+"</div>";tok[i]=w}
+  tok[i].style.display=p.out?"none":"";tok[i].classList.toggle("cur",i==s.cur&&s.ph!="lobby")});placeTk();
+ T.forEach((t,i)=>{const o=s.O[i],d=tl[i];d.querySelector(".own").style.background=o?s.P[o.o].c:"transparent";d.querySelector(".hs").textContent=o&&o.h?(o.h==4?"🏨":"🏠".repeat(o.h)):""});
+ $("pl").innerHTML=s.P.map((p,i)=>`<div class="pl${i==s.cur&&s.ph!="lobby"&&s.ph!="over"?" on":""}${p.out?" out":""}" id="pl${i}" style="--c:${p.c}"><span class="sw"></span><span>${esc(p.n)}${p.id==me?" (you)":""}${p.j>=0?" ⛓️":""}</span><span class="cash">₹${p.cash}</span></div>`).join("");
+ s.P.forEach((p,i)=>{const d=p.cash-(lastCash[i]==null?p.cash:lastCash[i]);if(d){const f=document.createElement("span");f.className="fl";f.style.color=d>0?"#7dff5a":"#ff6b8b";f.textContent=(d>0?"+":"−")+"₹"+Math.abs(d);$("pl"+i).appendChild(f)}lastCash[i]=p.cash});
+ const c=s.P[s.cur];$("cn").innerHTML=s.ph=="lobby"?"Waiting for players… "+s.P.length+"/8":s.ph=="over"?"🏆 "+esc(s.P[s.win].n)+" WINS!":`<span style="color:${c.c}">${esc(c.n)}</span>’s turn`;
+ $("log").innerHTML=s.log.slice(-9).reverse().map(esc).join("<br>");ctl()}
+function btn(l,f,c){const b=document.createElement("button");b.className="btn "+(c||"");b.textContent=l;b.onclick=()=>{beep(520,.08);f()};$("act").appendChild(b)}
+function ctl(){const s=disp,a=$("act");a.innerHTML="";$("hint").textContent="";if(!s)return;const mi=s.P.findIndex(p=>p.id==me);
+ if(s.ph=="lobby"){if(mi==0)btn("▶ START GAME ("+s.P.length+")",()=>cm(x=>{x.ph="roll";x.cur=0;x.multi=x.P.length>1;ev(x,"Game on! Everyone starts with ₹"+x.cash,"info",0)}),"go");$("hint").textContent=mi==0?"Share room code “"+room+"” – you are the host.":"Waiting for the host to start…";return}
+ if(s.ph=="over"){if(mi==0)btn("Play again",()=>cm(x=>{const P=x.P.map(p=>({...p,pos:0,cash:x.cash,j:-1,out:0}));Object.assign(x,fresh(),{P,ph:"roll",multi:P.length>1,v:x.v})}));return}
+ if(busy||mi!=s.cur){$("hint").textContent=busy?"…":"Waiting for "+s.P[s.cur].n+"…";return}const p=s.P[mi],t=T[p.pos];
+ if(s.ph=="roll"){btn("🎲 ROLL",()=>cm(doRoll),"go");if(p.j>=0&&p.cash>=1000)btn("Pay ₹1000 · leave jail",()=>cm(x=>{pay(x,x.cur,1000,null);x.P[x.cur].j=-1;ev(x,p.n+" pays ₹1000 and walks free","loss",x.cur)}),"alt");if(p.j>=0)$("hint").textContent="In Central Jail – roll a double or pay ₹1000."}
+ if(s.ph=="buy"){btn("Buy "+t.n+" ₹"+t.p,()=>cm(x=>{const q=x.P[x.cur];q.cash-=t.p;x.O[q.pos]={o:x.cur,h:0};ev(x,q.n+" buys "+t.n+"!","buy",x.cur);x.ph="act"}));btn("Skip",()=>cm(x=>{x.ph="act"}),"red")}
+ if(s.ph=="act"){for(const k in s.O){const o=s.O[k],q=T[k],c=Math.round(q.p/2);if(o.o==mi&&q.k=="c"&&o.h<4&&own(s,q.g,mi)&&p.cash>=c&&G[q.g].every(x=>s.O[x].h>=o.h))btn("🏗 "+q.n+" ₹"+c,()=>cm(x=>build(x,k)),"alt")}
+  btn(s.xdbl?"Roll again (double!)":"End turn",()=>cm(endT),s.xdbl?"go":"red")}}
+for(let i=0;i<60;i++){const e=document.createElement("i");e.className="st";e.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s`;$("stars").appendChild(e)}
+</script></body></html>
